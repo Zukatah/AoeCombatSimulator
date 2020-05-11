@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -10,7 +11,7 @@ namespace AoeCombatSimulator
     {
         public int numberOfFights;
         public short hitAndRunMode; // 0=noHit&Run, 1=semi, 2=fullHit&Run
-        public Player[] players = new Player[2] { new Player(Color.FromArgb(0, 0, 128)), new Player(Color.FromArgb(128, 0, 0)) };
+        public Player[] players = new Player[2];
         public ComboBox hitAndRunSettingsCombobox;
         public Label numberOfSimulationsLabel;
         public TextBox numberOfSimulationsTextbox;
@@ -21,8 +22,9 @@ namespace AoeCombatSimulator
         public Form1()
         {
             InitializeComponent();
+            players[0] = new Player(Color.FromArgb(0, 0, 128), this, 0);
+            players[1] = new Player(Color.FromArgb(128, 0, 0), this, 1);
             InitializeSimulatorGui();
-            InitializePlayerGui();
         }
 
         private void InitializeSimulatorGui()
@@ -57,114 +59,6 @@ namespace AoeCombatSimulator
             Controls.Add(startSimulationButton);
         }
 
-        private void InitializePlayerGui()
-        {
-            for (int i = 0; i < 2; i++)
-            {
-                players[i].numberOfUnitsLabel = new Label();
-                players[i].numberOfUnitsLabel.Location = new Point(160 + 600 * i, 185);
-                players[i].numberOfUnitsLabel.Text = "#Units";
-                players[i].numberOfUnitsLabel.AutoSize = true;
-                players[i].numberOfUnitsLabel.ForeColor = players[i].playerColor;
-                Controls.Add(players[i].numberOfUnitsLabel);
-                players[i].numberOfAverageSurvivorsLabel = new Label();
-                players[i].numberOfAverageSurvivorsLabel.Location = new Point(211 + 600 * i, 185);
-                players[i].numberOfAverageSurvivorsLabel.Text = "#Avg. Survivors";
-                players[i].numberOfAverageSurvivorsLabel.AutoSize = true;
-                players[i].numberOfAverageSurvivorsLabel.ForeColor = players[i].playerColor;
-                Controls.Add(players[i].numberOfAverageSurvivorsLabel);
-
-                for (int j = 0; j < AoeData.unitTypesList.Count; j++)
-                {
-                    players[i].amountStartUnits.Add(0);
-                    players[i].utNameLabel.Add(new Label());
-                    players[i].utNameLabel[j].Location = new Point(10 + 600 * i + (j / 29) * 275, 200 + 21 * (j % 29));
-                    players[i].utNameLabel[j].Text = AoeData.unitTypesList[j].name;
-                    players[i].utNameLabel[j].AutoSize = true;
-                    players[i].utNameLabel[j].ForeColor = players[i].playerColor;
-                    Controls.Add(players[i].utNameLabel[j]);
-                    players[i].enterAmountTextbox.Add(new TextBox());
-                    players[i].enterAmountTextbox[j].Location = new Point(160 + 600 * i + (j / 29) * 275, 200 + 21 * (j % 29));
-                    players[i].enterAmountTextbox[j].Size = new Size(50, 20);
-                    players[i].enterAmountTextbox[j].Text = "0";
-                    Controls.Add(players[i].enterAmountTextbox[j]);
-                    players[i].avgSurvivorsTextbox.Add(new TextBox());
-                    players[i].avgSurvivorsTextbox[j].Location = new Point(211 + 600 * i + (j / 29) * 275, 200 + 21 * (j % 29));
-                    players[i].avgSurvivorsTextbox[j].Size = new Size(50, 20);
-                    players[i].avgSurvivorsTextbox[j].ReadOnly = true;
-                    Controls.Add(players[i].avgSurvivorsTextbox[j]);
-                }
-
-                players[i].armyLabel = new Label();
-                players[i].armyLabel.Location = new Point(220 + 600 * i, 10);
-                players[i].armyLabel.Text = "Army " + (i+1);
-                players[i].armyLabel.AutoSize = true;
-                players[i].armyLabel.ForeColor = players[i].playerColor;
-                Controls.Add(players[i].armyLabel);
-
-                players[i].resourcesInvestedLabel = new Label();
-                players[i].resourcesInvestedLabel.Location = new Point(160 + 600 * i, 60);
-                players[i].resourcesInvestedLabel.Text = "Resources invested";
-                players[i].resourcesInvestedLabel.AutoSize = true;
-                players[i].resourcesInvestedLabel.ForeColor = players[i].playerColor;
-                Controls.Add(players[i].resourcesInvestedLabel);
-                players[i].resourcesLostLabel = new Label();
-                players[i].resourcesLostLabel.Location = new Point(160 + 600 * i, 850);
-                players[i].resourcesLostLabel.Text = "Resources lost";
-                players[i].resourcesLostLabel.AutoSize = true;
-                players[i].resourcesLostLabel.ForeColor = players[i].playerColor;
-                Controls.Add(players[i].resourcesLostLabel);
-
-                for (int j=0; j < 3; j++)
-                {
-                    players[i].resourcesInvestedLabels[j] = new Label();
-                    players[i].resourcesInvestedLabels[j].Location = new Point(160 + 81 * j + 600 * i, 79);
-                    players[i].resourcesInvestedLabels[j].Size = new Size(80, 20);
-                    players[i].resourcesInvestedLabels[j].Image = AoeData.resourceImages[j];
-                    Controls.Add(players[i].resourcesInvestedLabels[j]);
-                    players[i].resourcesInvestedTextboxes[j] = new TextBox();
-                    players[i].resourcesInvestedTextboxes[j].ReadOnly = true;
-                    players[i].resourcesInvestedTextboxes[j].Location = new Point(160 + 81 * j + 600 * i, 100);
-                    players[i].resourcesInvestedTextboxes[j].Size = new Size(80, 20);
-                    Controls.Add(players[i].resourcesInvestedTextboxes[j]);
-
-                    players[i].resourcesLostLabels[j] = new Label();
-                    players[i].resourcesLostLabels[j].Location = new Point(160 + 81 * j + 600 * i, 869);
-                    players[i].resourcesLostLabels[j].Size = new Size(80, 20);
-                    players[i].resourcesLostLabels[j].Image = AoeData.resourceImages[j];
-                    Controls.Add(players[i].resourcesLostLabels[j]);
-                    players[i].resourcesLostTextboxes[j] = new TextBox();
-                    players[i].resourcesLostTextboxes[j].ReadOnly = true;
-                    players[i].resourcesLostTextboxes[j].Location = new Point(160 + 81 * j + 600 * i, 890);
-                    players[i].resourcesLostTextboxes[j].Size = new Size(80, 20);
-                    Controls.Add(players[i].resourcesLostTextboxes[j]);
-                }
-
-                players[i].totalResourcesInvestedTextbox = new TextBox();
-                players[i].totalResourcesInvestedTextbox.ReadOnly = true;
-                players[i].totalResourcesInvestedTextbox.Location = new Point(160 + 600 * i, 121);
-                players[i].totalResourcesInvestedTextbox.Size = new Size(242, 20);
-                Controls.Add(players[i].totalResourcesInvestedTextbox);
-                players[i].totalResourcesLostTextbox = new TextBox();
-                players[i].totalResourcesLostTextbox.ReadOnly = true;
-                players[i].totalResourcesLostTextbox.Location = new Point(160 + 600 * i, 911);
-                players[i].totalResourcesLostTextbox.Size = new Size(242, 20);
-                Controls.Add(players[i].totalResourcesLostTextbox);
-
-                players[i].sumWinsLabel = new Label();
-                players[i].sumWinsLabel.Location = new Point(220 + 600 * i, 935);
-                players[i].sumWinsLabel.Text = "#Wins Army " + (i + 1);
-                players[i].sumWinsLabel.AutoSize = true;
-                players[i].sumWinsLabel.ForeColor = players[i].playerColor;
-                Controls.Add(players[i].sumWinsLabel);
-                players[i].sumWinsTextbox = new TextBox();
-                players[i].sumWinsTextbox.ReadOnly = true;
-                players[i].sumWinsTextbox.Location = new Point(220 + 600 * i, 950);
-                players[i].sumWinsTextbox.Size = new Size(80, 20);
-                Controls.Add(players[i].sumWinsTextbox);
-            }
-        }
-        
         private void PrintResults()
         {
             for (int i = 0; i < 2; i++)
@@ -174,7 +68,10 @@ namespace AoeCombatSimulator
                     double avgSurv = 1.0 * players[i].survivorsSumArmy[AoeData.unitTypesList[j]] / numberOfFights;
                     double avgSurvPerc = avgSurv / players[i].amountStartUnits[j];
                     players[i].avgSurvivorsTextbox[j].Text = avgSurv.ToString();
-                    players[i].avgSurvivorsTextbox[j].BackColor = players[i].amountStartUnits[j] == 0 ? Color.FromArgb(128, 128, 128) : (avgSurvPerc == 0.0 ? Color.FromArgb(255, 128, 128) : (avgSurvPerc <= 0.1 ? Color.FromArgb(255, 192, 192) : (avgSurvPerc <= 0.5 ? Color.FromArgb(255, 255, 192) : (avgSurvPerc <= 0.9 ? Color.FromArgb(192, 255, 192) : Color.FromArgb(128, 255, 128)))));
+                    players[i].avgSurvivorsTextbox[j].BackColor = players[i].amountStartUnits[j] == 0 ? Color.FromArgb(128, 128, 128) :
+                        Color.FromArgb(255 - (int)(128.0 * avgSurvPerc), 127 + (int)(128.0 * avgSurvPerc), 0);
+                    // 0.0 <-> (255, 128, 128), <=0.1 <-> (255, 192, 192), <=0.5 <-> (255, 255, 192), <=0.9 <-> (192, 255, 192), >0.9 <-> (128, 255, 128)
+
                     for (int k = 0; k < 3; k++)
                     {
                         players[i].resourcesRemaining[k] += (int)Math.Round(AoeData.unitTypesList[j].resourceCosts[k] * avgSurv);

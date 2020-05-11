@@ -18,7 +18,6 @@ namespace AoeCombatSimulator
             Application.SetCompatibleTextRenderingDefault(false);
             AoeData.InitializeUnitTypes();
             Application.Run(new Form1());
-            Application.Run(new Form1());
         }
     }
 }
