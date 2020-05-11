@@ -8,20 +8,19 @@ namespace AoeCombatSimulator
 {
     public partial class Form1 : Form
     {
-        public static int numberOfFights;
+        public int numberOfFights;
         public short hitAndRunMode; // 0=noHit&Run, 1=semi, 2=fullHit&Run
-        public static Player[] players = new Player[2] { new Player(Color.FromArgb(0, 0, 128)), new Player(Color.FromArgb(128, 0, 0)) };
-        public static ComboBox hitAndRunSettingsCombobox;
-        public static Label numberOfSimulationsLabel;
-        public static TextBox numberOfSimulationsTextbox;
-        public static Button startSimulationButton;
+        public Player[] players = new Player[2] { new Player(Color.FromArgb(0, 0, 128)), new Player(Color.FromArgb(128, 0, 0)) };
+        public ComboBox hitAndRunSettingsCombobox;
+        public Label numberOfSimulationsLabel;
+        public TextBox numberOfSimulationsTextbox;
+        public Button startSimulationButton;
 
 
 
         public Form1()
         {
             InitializeComponent();
-            InitializeUnitTypes();
             InitializeSimulatorGui();
             InitializePlayerGui();
         }
@@ -75,27 +74,26 @@ namespace AoeCombatSimulator
                 players[i].numberOfAverageSurvivorsLabel.ForeColor = players[i].playerColor;
                 Controls.Add(players[i].numberOfAverageSurvivorsLabel);
 
-                int tbIndex = 0;
-                unitTypesList.ForEach(ut =>
+                for (int j = 0; j < AoeData.unitTypesList.Count; j++)
                 {
-                    Label label = new Label();
-                    label.Location = new Point(10 + 600 * i + (tbIndex / 29) * 275, 200 + 21 * (tbIndex % 29));
-                    label.Text = ut.name;
-                    label.AutoSize = true;
-                    label.ForeColor = players[i].playerColor;
-                    Controls.Add(label);
-                    ut.enterAmountTextbox[i] = new TextBox();
-                    ut.enterAmountTextbox[i].Location = new Point(160 + 600 * i + (tbIndex / 29) * 275, 200 + 21 * (tbIndex % 29));
-                    ut.enterAmountTextbox[i].Size = new Size(50, 20);
-                    ut.enterAmountTextbox[i].Text = "0";
-                    Controls.Add(ut.enterAmountTextbox[i]);
-                    ut.avgSurvivorsTextbox[i] = new TextBox();
-                    ut.avgSurvivorsTextbox[i].Location = new Point(211 + 600 * i + (tbIndex / 29) * 275, 200 + 21 * (tbIndex % 29));
-                    ut.avgSurvivorsTextbox[i].Size = new Size(50, 20);
-                    ut.avgSurvivorsTextbox[i].ReadOnly = true;
-                    Controls.Add(ut.avgSurvivorsTextbox[i]);
-                    tbIndex++;
-                });
+                    players[i].amountStartUnits.Add(0);
+                    players[i].utNameLabel.Add(new Label());
+                    players[i].utNameLabel[j].Location = new Point(10 + 600 * i + (j / 29) * 275, 200 + 21 * (j % 29));
+                    players[i].utNameLabel[j].Text = AoeData.unitTypesList[j].name;
+                    players[i].utNameLabel[j].AutoSize = true;
+                    players[i].utNameLabel[j].ForeColor = players[i].playerColor;
+                    Controls.Add(players[i].utNameLabel[j]);
+                    players[i].enterAmountTextbox.Add(new TextBox());
+                    players[i].enterAmountTextbox[j].Location = new Point(160 + 600 * i + (j / 29) * 275, 200 + 21 * (j % 29));
+                    players[i].enterAmountTextbox[j].Size = new Size(50, 20);
+                    players[i].enterAmountTextbox[j].Text = "0";
+                    Controls.Add(players[i].enterAmountTextbox[j]);
+                    players[i].avgSurvivorsTextbox.Add(new TextBox());
+                    players[i].avgSurvivorsTextbox[j].Location = new Point(211 + 600 * i + (j / 29) * 275, 200 + 21 * (j % 29));
+                    players[i].avgSurvivorsTextbox[j].Size = new Size(50, 20);
+                    players[i].avgSurvivorsTextbox[j].ReadOnly = true;
+                    Controls.Add(players[i].avgSurvivorsTextbox[j]);
+                }
 
                 players[i].armyLabel = new Label();
                 players[i].armyLabel.Location = new Point(220 + 600 * i, 10);
@@ -122,7 +120,7 @@ namespace AoeCombatSimulator
                     players[i].resourcesInvestedLabels[j] = new Label();
                     players[i].resourcesInvestedLabels[j].Location = new Point(160 + 81 * j + 600 * i, 79);
                     players[i].resourcesInvestedLabels[j].Size = new Size(80, 20);
-                    players[i].resourcesInvestedLabels[j].Image = resourceImages[j];
+                    players[i].resourcesInvestedLabels[j].Image = AoeData.resourceImages[j];
                     Controls.Add(players[i].resourcesInvestedLabels[j]);
                     players[i].resourcesInvestedTextboxes[j] = new TextBox();
                     players[i].resourcesInvestedTextboxes[j].ReadOnly = true;
@@ -133,7 +131,7 @@ namespace AoeCombatSimulator
                     players[i].resourcesLostLabels[j] = new Label();
                     players[i].resourcesLostLabels[j].Location = new Point(160 + 81 * j + 600 * i, 869);
                     players[i].resourcesLostLabels[j].Size = new Size(80, 20);
-                    players[i].resourcesLostLabels[j].Image = resourceImages[j];
+                    players[i].resourcesLostLabels[j].Image = AoeData.resourceImages[j];
                     Controls.Add(players[i].resourcesLostLabels[j]);
                     players[i].resourcesLostTextboxes[j] = new TextBox();
                     players[i].resourcesLostTextboxes[j].ReadOnly = true;
@@ -171,16 +169,17 @@ namespace AoeCombatSimulator
         {
             for (int i = 0; i < 2; i++)
             {
-                unitTypesList.ForEach(ut => {
-                    double avgSurv = 1.0 * players[i].survivorsSumArmy[ut] / numberOfFights;
-                    double avgSurvPerc = avgSurv / ut.amountStartUnits[i];
-                    ut.avgSurvivorsTextbox[i].Text = avgSurv.ToString();
-                    ut.avgSurvivorsTextbox[i].BackColor = ut.amountStartUnits[i] == 0 ? Color.FromArgb(128,128,128) : (avgSurvPerc == 0.0 ? Color.FromArgb(255, 128, 128) : (avgSurvPerc <= 0.1 ? Color.FromArgb(255, 192, 192) : (avgSurvPerc <= 0.5 ? Color.FromArgb(255, 255, 192) : (avgSurvPerc <= 0.9 ? Color.FromArgb(192, 255, 192) : Color.FromArgb(128, 255, 128)))));
-                    for (int j = 0; j < 3; j++)
+                for (int j = 0; j < AoeData.unitTypesList.Count; j++)
+                {
+                    double avgSurv = 1.0 * players[i].survivorsSumArmy[AoeData.unitTypesList[j]] / numberOfFights;
+                    double avgSurvPerc = avgSurv / players[i].amountStartUnits[j];
+                    players[i].avgSurvivorsTextbox[j].Text = avgSurv.ToString();
+                    players[i].avgSurvivorsTextbox[j].BackColor = players[i].amountStartUnits[j] == 0 ? Color.FromArgb(128, 128, 128) : (avgSurvPerc == 0.0 ? Color.FromArgb(255, 128, 128) : (avgSurvPerc <= 0.1 ? Color.FromArgb(255, 192, 192) : (avgSurvPerc <= 0.5 ? Color.FromArgb(255, 255, 192) : (avgSurvPerc <= 0.9 ? Color.FromArgb(192, 255, 192) : Color.FromArgb(128, 255, 128)))));
+                    for (int k = 0; k < 3; k++)
                     {
-                        players[i].resourcesRemaining[j] += (int)Math.Round(ut.resourceCosts[j] * avgSurv);
+                        players[i].resourcesRemaining[k] += (int)Math.Round(AoeData.unitTypesList[j].resourceCosts[k] * avgSurv);
                     }
-                });
+                }
 
                 for (int j = 0; j < 3; j++)
                 {
@@ -202,13 +201,14 @@ namespace AoeCombatSimulator
                 for (int i = 0; i < 2; i++)
                 {
                     players[i].ResetData();
-                    unitTypesList.ForEach(ut => {
-                        ut.amountStartUnits[i] = Int32.Parse(ut.enterAmountTextbox[i].Text);
-                        for (int j = 0; j < 3; j++)
+                    for (int j = 0; j < AoeData.unitTypesList.Count; j++)
+                    {
+                        players[i].amountStartUnits[j] = Int32.Parse(players[i].enterAmountTextbox[j].Text);
+                        for (int k = 0; k < 3; k++)
                         {
-                            players[i].resourcesInvested[j] += ut.resourceCosts[j] * ut.amountStartUnits[i];
+                            players[i].resourcesInvested[k] += AoeData.unitTypesList[j].resourceCosts[k] * players[i].amountStartUnits[j];
                         }
-                    });
+                    }
                 }
             }
             catch (Exception)

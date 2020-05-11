@@ -8,7 +8,7 @@ using System.Windows.Forms;
 
 namespace AoeCombatSimulator
 {
-    partial class Form1 : Form
+    public static class AoeData
     {
         public static ArmorClass ac_infantry = new ArmorClass("Infantry");
         public static ArmorClass ac_basePierce = new ArmorClass("Base pierce");
@@ -115,8 +115,13 @@ namespace AoeCombatSimulator
             Properties.Resources.gold_bars_4722600_960_720 };
 
 
-        private void InitializeUnitTypes()
+        public static void InitializeUnitTypes()
         {
+            for (int i = 0; i < unitTypesList.Count; i++)
+            {
+                unitTypesList[i].unitTypeIndex = i;
+            }
+
             ut_villager.armorClasses.Add(ac_baseMelee, 1.0m);
             ut_villager.armorClasses.Add(ac_basePierce, 2.0m);
             ut_villager.attackValues.Add(ac_baseMelee, 3.0m);

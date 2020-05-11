@@ -46,11 +46,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AoeData.cs" />
     <Compile Include="ArmorClass.cs" />
     <Compile Include="Battle.cs" />
-    <Compile Include="AoeData.cs">
-      <SubType>Form</SubType>
-    </Compile>
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

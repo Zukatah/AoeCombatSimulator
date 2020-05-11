@@ -8,6 +8,9 @@ namespace AoeCombatSimulator
         public decimal hp;
         public decimal hpRegPerMin;
 
+        public Dictionary<ArmorClass, decimal> attackValues;
+        public Dictionary<ArmorClass, decimal> armorClasses;
+
         public decimal attackSpeed;
         public double attackRange;
         public double attackRangeMin;
@@ -29,8 +32,6 @@ namespace AoeCombatSimulator
 
         public double radius;
 
-        public Dictionary<ArmorClass, decimal> attackValues;
-        public Dictionary<ArmorClass, decimal> armorClasses;
         
         public UnitType unitType; // this unit's unit type; the unit type defines many attributes of each unit
         public Battle battle; // the reference to the battle instance this unit belongs to
@@ -190,11 +191,11 @@ namespace AoeCombatSimulator
         public static decimal CalculateDamageDealtToTarget(Unit attacker, Unit target, bool secondary = false)
         {
             decimal damageDealt = 0.0m;
-            if (attacker.unitType == Form1.ut_eliteLeitis) // leitis ignore armor and don't have any attack bonusses
+            if (attacker.unitType == AoeData.ut_eliteLeitis) // leitis ignore armor and don't have any attack bonusses
             {
-                damageDealt = attacker.attackValues[Form1.ac_baseMelee];
+                damageDealt = attacker.attackValues[AoeData.ac_baseMelee];
             }
-            else if (secondary && attacker.unitType == Form1.ut_eliteOrganGun) // secondary missiles of organ guns always deal 2 damage (and 1 if target wasn't the main target)
+            else if (secondary && attacker.unitType == AoeData.ut_eliteOrganGun) // secondary missiles of organ guns always deal 2 damage (and 1 if target wasn't the main target)
             {
                 damageDealt = 2;
             }
@@ -246,11 +247,11 @@ namespace AoeCombatSimulator
                     });
                 }
 
-                if (unitType == Form1.ut_eliteKeshik)
+                if (unitType == AoeData.ut_eliteKeshik)
                 {
                     battle.resourcesGenerated[armyIndex, 2] += 0.695m;
                 }
-                if (unitType == Form1.ut_flamingCamel)
+                if (unitType == AoeData.ut_flamingCamel)
                 {
                     curHp = 0.0m;
                 }

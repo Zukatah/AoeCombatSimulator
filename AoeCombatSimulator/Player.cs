@@ -23,6 +23,7 @@ namespace AoeCombatSimulator
         public int[] resourcesInvested = new int[3]; // worth (food, wood, gold) of all starting units
         public int[] resourcesRemaining = new int[3]; // worth (food, wood, gold) of all surviving units
         public int[] resourcesGenerated = new int[3]; // sum of all generated resources (currently only for Keshiks)
+        public List<int> amountStartUnits = new List<int>();
 
 
         // Player GUI //
@@ -40,10 +41,13 @@ namespace AoeCombatSimulator
         public TextBox totalResourcesLostTextbox;
         public Label sumWinsLabel;
         public TextBox sumWinsTextbox;
+        public List<Label> utNameLabel = new List<Label>();
+        public List<TextBox> enterAmountTextbox = new List<TextBox>();
+        public List<TextBox> avgSurvivorsTextbox = new List<TextBox>();
 
         public Player(Color playerColor)
         {
-            Form1.unitTypesList.ForEach(ut => { survivorsSumArmy[ut] = 0; });
+            AoeData.unitTypesList.ForEach(ut => { survivorsSumArmy[ut] = 0; });
             this.playerColor = playerColor;
         }
 
@@ -58,7 +62,9 @@ namespace AoeCombatSimulator
             }
             attackAttacker = 0;
             attackRandomNearbyTarget = 0;
-            Form1.unitTypesList.ForEach(ut => { survivorsSumArmy[ut] = 0; });
+            AoeData.unitTypesList.ForEach(ut => { survivorsSumArmy[ut] = 0; });
         }
+
+
     }
 }

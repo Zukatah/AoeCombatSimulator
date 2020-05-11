@@ -5,10 +5,14 @@ namespace AoeCombatSimulator
 {
     public class UnitType
     {
+        public int unitTypeIndex;
         public string name;
 
         public decimal hp;
         public decimal hpRegPerMin;
+
+        public Dictionary<ArmorClass, decimal> attackValues = new Dictionary<ArmorClass, decimal>();
+        public Dictionary<ArmorClass, decimal> armorClasses = new Dictionary<ArmorClass, decimal>();
 
         public decimal attackSpeed; // time between two attacks in seconds
         public double attackRange; // maximum attack range in tiles
@@ -33,12 +37,6 @@ namespace AoeCombatSimulator
         
         public ushort[] resourceCosts = new ushort[3]; // [0]=food, [1]=wood, [2]=gold
 
-        public Dictionary<ArmorClass, decimal> attackValues = new Dictionary<ArmorClass, decimal>();
-        public Dictionary<ArmorClass, decimal> armorClasses = new Dictionary<ArmorClass, decimal>();
-
-        public TextBox[] enterAmountTextbox = new TextBox[2];
-        public TextBox[] avgSurvivorsTextbox = new TextBox[2];
-        public int[] amountStartUnits = new int[2];
 
         public UnitType(string name, decimal hp, decimal attackSpeed, double attackRange, decimal attackDelay, double projectileSpeed, double moveSpeed, ushort foodCost, ushort woodCost, ushort goldCost, double radius = 0.2, double attackRangeMin = 0.0, int accuracyPercent = 100, decimal hpRegPerMin = 0.0m)
         {
