@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace AoeCombatSimulator
 {
-    public partial class Form1 : Form
+    public class UserInterface : Form
     {
         public int numberOfFights;
         public short hitAndRunMode; // 0=noHit&Run, 1=semi, 2=fullHit&Run
@@ -18,14 +18,28 @@ namespace AoeCombatSimulator
         public Button startSimulationButton;
 
 
-
-        public Form1()
+        public UserInterface()
         {
             InitializeComponent();
             players[0] = new Player(Color.FromArgb(0, 0, 128), this, 0);
             players[1] = new Player(Color.FromArgb(128, 0, 0), this, 1);
             InitializeSimulatorGui();
         }
+
+
+        private void InitializeComponent() // required for designer support
+        {
+            SuspendLayout();
+
+            AutoScaleDimensions = new SizeF(6F, 13F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackgroundImageLayout = ImageLayout.Zoom;
+            ClientSize = new Size(1184, 987);
+            DoubleBuffered = true;
+            Text = "AoE Combat Simulator";
+            ResumeLayout(false);
+        }
+
 
         private void InitializeSimulatorGui()
         {
@@ -34,7 +48,7 @@ namespace AoeCombatSimulator
             hitAndRunSettingsCombobox.Size = new Size(120, 20);
             hitAndRunSettingsCombobox.DropDownStyle = ComboBoxStyle.DropDownList;
             hitAndRunSettingsCombobox.FormattingEnabled = true;
-            hitAndRunSettingsCombobox.Items.AddRange(new object[] {"No Hit&Run", "Medium Hit&Run (50% efficiency)", "Perfect Hit&Run"});
+            hitAndRunSettingsCombobox.Items.AddRange(new object[] { "No Hit&Run", "Medium Hit&Run (50% efficiency)", "Perfect Hit&Run" });
             hitAndRunSettingsCombobox.SelectedIndex = 0;
             Controls.Add(hitAndRunSettingsCombobox);
 
@@ -127,7 +141,7 @@ namespace AoeCombatSimulator
 
             Stopwatch watch = new Stopwatch();
             watch.Start();
-            
+
             int numTasks = Environment.ProcessorCount;
             int numFights = numberOfFights;
             var tasks = new Task[numTasks];
@@ -137,7 +151,7 @@ namespace AoeCombatSimulator
                 int numFightsForTask = numFights / numTasks + (taskIdCopy < numFights % numTasks ? 1 : 0);
                 tasks[taskId] = Task.Factory.StartNew(() => {
                     for (int i = 0; i < numFightsForTask; i++)
-                    new Battle(this, taskIdCopy, i, hitAndRunMode);
+                        new Battle(this, taskIdCopy, i, hitAndRunMode);
                 });
             }
             Task.WaitAll(tasks);
@@ -147,7 +161,7 @@ namespace AoeCombatSimulator
 
             for (int i = 0; i < 2; i++)
             {
-                Console.WriteLine("Army " + (i+1) + ": Attacking attacker: " + players[i].attackAttacker + ". Attacking random nearby target: " + players[i].attackRandomNearbyTarget + ".");
+                Console.WriteLine("Army " + (i + 1) + ": Attacking attacker: " + players[i].attackAttacker + ". Attacking random nearby target: " + players[i].attackRandomNearbyTarget + ".");
                 Console.WriteLine(players[i] + " Hit: " + players[i].regularHit + " Total Miss MTAlive: " + players[i].missTotalMainTargetAlive + " Total Miss MTDead: " + players[i].missTotalMainTargetDead + " Miss Main Target: " + players[i].missMainTarget + " Miss Side Target: " + players[i].missSideTarget);
             }
             Console.WriteLine("Elapsed time for simulation: " + watch.Elapsed);

@@ -19,7 +19,7 @@ namespace AoeCombatSimulator.Properties {
     // -Klasse über ein Tool wie ResGen oder Visual Studio automatisch generiert.
     // Um einen Member hinzuzufügen oder zu entfernen, bearbeiten Sie die .ResX-Datei und führen dann ResGen
     // mit der /str-Option erneut aus, oder Sie erstellen Ihr VS-Projekt neu.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -73,36 +73,6 @@ namespace AoeCombatSimulator.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap gold_1013618_960_720 {
-            get {
-                object obj = ResourceManager.GetObject("gold-1013618_960_720", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap gold_1013618_960_7201 {
-            get {
-                object obj = ResourceManager.GetObject("gold-1013618_960_7201", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap gold_1013618_960_7202 {
-            get {
-                object obj = ResourceManager.GetObject("gold-1013618_960_7202", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
         internal static System.Drawing.Bitmap gold_bars_4722600_960_720 {
             get {
                 object obj = ResourceManager.GetObject("gold-bars-4722600_960_720", resourceCulture);
@@ -126,16 +96,6 @@ namespace AoeCombatSimulator.Properties {
         internal static System.Drawing.Bitmap swords_2453295_1280 {
             get {
                 object obj = ResourceManager.GetObject("swords-2453295_1280", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap TM_2011_10manat_Monument3_b {
-            get {
-                object obj = ResourceManager.GetObject("TM-2011-10manat-Monument3-b", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

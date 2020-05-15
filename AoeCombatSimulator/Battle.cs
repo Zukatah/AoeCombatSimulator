@@ -7,7 +7,7 @@ namespace AoeCombatSimulator
 {
     public class Battle
     {
-        private Form1 form;
+        private UserInterface userInterface;
         private int taskId;
         private int battleId;
         public short hitAndRunMode;
@@ -24,9 +24,9 @@ namespace AoeCombatSimulator
         public decimal[,] resourcesGenerated = new decimal[2, 3] { { 0m, 0m, 0m }, { 0m, 0m, 0m } }; // currently only for the Keshik gold generation
 
 
-        public Battle(Form1 form1, int taskId, int battleId, short hitAndRunMode)
+        public Battle(UserInterface userInterface, int taskId, int battleId, short hitAndRunMode)
         {
-            form = form1;
+            this.userInterface = userInterface;
             this.taskId = taskId;
             this.battleId = battleId;
             this.hitAndRunMode = hitAndRunMode;
@@ -60,10 +60,10 @@ namespace AoeCombatSimulator
 
             for (int i = 0; i < 2; i++)
             {
-                army_SizeMelee[i] = AoeData.unitTypesList.Where(ut => ut.attackRange <= 1.0).Sum(ut => form.players[i].amountStartUnits[ut.unitTypeIndex]);
+                army_SizeMelee[i] = AoeData.unitTypesList.Where(ut => ut.attackRange <= 1.0).Sum(ut => userInterface.players[i].amountStartUnits[ut.unitTypeIndex]);
                 army_MeleeWidth[i] = (int)Math.Ceiling(Math.Sqrt(army_SizeMelee[i] / 2.0));
                 army_MeleeHeight[i] = army_MeleeWidth[i] * 2;
-                army_SizeRanged[i] = AoeData.unitTypesList.Where(ut => ut.attackRange > 1.0).Sum(ut => form.players[i].amountStartUnits[ut.unitTypeIndex]);
+                army_SizeRanged[i] = AoeData.unitTypesList.Where(ut => ut.attackRange > 1.0).Sum(ut => userInterface.players[i].amountStartUnits[ut.unitTypeIndex]);
                 army_RangedWidth[i] = (int)Math.Ceiling(Math.Sqrt(army_SizeRanged[i] / 2.0));
                 army_RangedHeight[i] = army_RangedWidth[i] * 2;
                 army_Size[i] = army_SizeMelee[i] + army_SizeRanged[i];
@@ -72,7 +72,7 @@ namespace AoeCombatSimulator
 
                 for (int j = 0; j < AoeData.unitTypesList.Count; j++)
                 {
-                    for (int k = 0; k < form.players[i].amountStartUnits[j]; k++)
+                    for (int k = 0; k < userInterface.players[i].amountStartUnits[j]; k++)
                     {
                         armies[i].Add(new Unit(AoeData.unitTypesList[j], this, (short)i));
                     }
@@ -108,15 +108,15 @@ namespace AoeCombatSimulator
             {
                 AoeData.unitTypesList.ForEach(ut => {
                     utSurvivorsArmy[i] = armies[i].FindAll(u => u.unitType == ut).Count;
-                    while (form.players[i].survivorsSumArmy.TryGetValue(ut, out curValue))
+                    while (userInterface.players[i].survivorsSumArmy.TryGetValue(ut, out curValue))
                     {
-                        if (form.players[i].survivorsSumArmy.TryUpdate(ut, curValue + utSurvivorsArmy[i], curValue))
+                        if (userInterface.players[i].survivorsSumArmy.TryUpdate(ut, curValue + utSurvivorsArmy[i], curValue))
                         {
                             break;
                         }
                     }
                 });
-                Interlocked.Add(ref form.players[i].resourcesGenerated[2], (int)Math.Round(resourcesGenerated[i, 2]));
+                Interlocked.Add(ref userInterface.players[i].resourcesGenerated[2], (int)Math.Round(resourcesGenerated[i, 2]));
             }
         }
 
@@ -124,16 +124,16 @@ namespace AoeCombatSimulator
         {
             if (armies[0].Count > armies[1].Count)
             {
-                Interlocked.Add(ref form.players[0].sumWins, 2);
+                Interlocked.Add(ref userInterface.players[0].sumWins, 2);
             }
             else if (armies[0].Count == armies[1].Count)
             {
-                Interlocked.Increment(ref form.players[0].sumWins);
-                Interlocked.Increment(ref form.players[1].sumWins);
+                Interlocked.Increment(ref userInterface.players[0].sumWins);
+                Interlocked.Increment(ref userInterface.players[1].sumWins);
             }
             else
             {
-                Interlocked.Add(ref form.players[1].sumWins, 2);
+                Interlocked.Add(ref userInterface.players[1].sumWins, 2);
             }
         }
 
