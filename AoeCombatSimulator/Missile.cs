@@ -30,12 +30,12 @@ namespace AoeCombatSimulator
             y += dy;
             flightDurationPassed++;
 
-            int gx = x < -20.0 ? 0 : Math.Min(21, 1 + (int)Math.Floor((x + 20.0) / 2.0));
-            int gy = y < -20.0 ? 0 : Math.Min(21, 1 + (int)Math.Floor((y + 20.0) / 2.0));
+            int gx = x < -20.0 ? 0 : Math.Min(Battle.GRID_LENGTH - 1, 1 + (int)Math.Floor(x + 20.0));
+            int gy = y < -20.0 ? 0 : Math.Min(Battle.GRID_LENGTH - 1, 1 + (int)Math.Floor(y + 20.0));
             int minXGridIndex = Math.Max(0, gx - 1);
             int minYGridIndex = Math.Max(0, gy - 1);
-            int maxXGridIndex = Math.Min(21, gx + 1);
-            int maxYGridIndex = Math.Min(21, gy + 1);
+            int maxXGridIndex = Math.Min(Battle.GRID_LENGTH - 1, gx + 1);
+            int maxYGridIndex = Math.Min(Battle.GRID_LENGTH - 1, gy + 1);
             int targetArmyIndex = attacker.armyIndex == 1 ? 0 : 1;
             List<Unit> collisionTargets = new List<Unit>();
 
@@ -46,7 +46,7 @@ namespace AoeCombatSimulator
                     collisionTargets.AddRange(battle.gridUnits[i, j].Where(unit =>
                         unit.armyIndex == targetArmyIndex
                         && !alreadyAffectedUnits.Contains(unit)
-                        && (unit.X - x) * (unit.X - x) + (unit.Y - y) * (unit.Y - y) <= 0.1 + unit.radius
+                        && (unit.X - x) * (unit.X - x) + (unit.Y - y) * (unit.Y - y) <= (0.1 + unit.radius) * (0.1 + unit.radius)
                     ));
                 }
             }

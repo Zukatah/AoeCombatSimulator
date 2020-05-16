@@ -7,34 +7,30 @@ namespace AoeCombatSimulator
 {
     public class Battle
     {
-        private UserInterface userInterface;
-        private int taskId;
-        private int battleId;
-        public short hitAndRunMode;
+        private UserInterface userInterface; // a reference to the user interface instance to which this battle's results will be reported
+        public short hitAndRunMode; // 0 => no hit&run (except target too close for units with min range), 1 => hit&run with 50% efficiency, 2 => maximum hit&run possible
         
-        public List<Unit>[] armies = new List<Unit>[] { new List<Unit>(), new List<Unit>() };
-        public HashSet<Unit>[,] gridUnits = new HashSet<Unit>[22,22];
-        private List<Unit> graveyard = new List<Unit>();
-        public List<Arrow> arrows = new List<Arrow>();
-        public List<Missile> missiles = new List<Missile>();
+        public List<Unit>[] armies = new List<Unit>[] { new List<Unit>(), new List<Unit>() }; // the armies of both players
+        public const int GRID_LENGTH = 42;
+        public HashSet<Unit>[,] gridUnits = new HashSet<Unit>[GRID_LENGTH, GRID_LENGTH]; // a grid of hashsets containing all the units to improve missile collision detection performance
+        private List<Unit> graveyard = new List<Unit>(); // a list containing all dead units
+        public List<Arrow> arrows = new List<Arrow>(); // a list containing all arrows currently in the air
+        public List<Missile> missiles = new List<Missile>(); // a list containing all missiles (scorpion, battle elephant) currently in the air
 
-        public int timeInterval = 0; // 1 time interval = 0,01s
-        private int[] unitIndex = new int[2];
-        private Random rnd;
-        public decimal[,] resourcesGenerated = new decimal[2, 3] { { 0m, 0m, 0m }, { 0m, 0m, 0m } }; // currently only for the Keshik gold generation
+        public int timeInterval = 0; // number of time intervals since begin of the battle; one time interval = 0,01s
+        private Random rnd; // a random generator for slight shifts of initial unit placement (further reduces determinism and improves quality of battle results if number of iterations is large)
+        public decimal[,] resourcesGenerated = new decimal[2, 3] { { 0m, 0m, 0m }, { 0m, 0m, 0m } }; // currently only relevant for the Keshik gold generation
 
 
         public Battle(UserInterface userInterface, int taskId, int battleId, short hitAndRunMode)
         {
             this.userInterface = userInterface;
-            this.taskId = taskId;
-            this.battleId = battleId;
             this.hitAndRunMode = hitAndRunMode;
             rnd = new Random(taskId * Environment.ProcessorCount + battleId + Environment.TickCount);
 
-            for (int i = 0; i < gridUnits.GetLength(0); i++)
+            for (int i = 0; i < GRID_LENGTH; i++)
             {
-                for (int j = 0; j < gridUnits.GetLength(1); j++)
+                for (int j = 0; j < GRID_LENGTH; j++)
                 {
                     gridUnits[i, j] = new HashSet<Unit>();
                 }
@@ -79,6 +75,7 @@ namespace AoeCombatSimulator
                 }
 
                 armies[i].Shuffle();
+                int unitIndex = 0;
                 armies[i].ForEach(unit => {
                     if (unit.attackRange <= 1.0)
                     {
@@ -92,8 +89,8 @@ namespace AoeCombatSimulator
                             -army_RangedHeight[i] / 2.0 + army_RangedPlaced[i] % army_RangedHeight[i] + rnd.NextDouble() * 0.1 - 0.05);
                         army_RangedPlaced[i]++;
                     }
-                    unit.SetUnitIndex(unitIndex[i]);
-                    unitIndex[i]++;
+                    unit.SetUnitIndex(unitIndex);
+                    unitIndex++;
                 });
 
                 // armies[i].ForEach(unit => { Console.WriteLine("Army " + (i+1) + ":" + unit.unitType.name + " | " + unit.X + " - " + unit.Y); });
@@ -236,8 +233,3 @@ namespace AoeCombatSimulator
 
     }
 }
-
-
-/*
-//Console.WriteLine((timeInterval / 100.0) + "s: " + dyingUnit.unitType.name + " " + dyingUnit.index + " of army 1 dead."); // DEBUG
-*/

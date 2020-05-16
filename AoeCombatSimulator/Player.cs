@@ -11,21 +11,21 @@ namespace AoeCombatSimulator
 {
     public class Player
     {
-        public UserInterface userInterface;
-        public int sumWins = 0; // number of battle wins of player
+        public UserInterface userInterface; // a reference to the user interface instance to which this player's gui elements will be added
+        public int sumWins = 0; // number of battle wins (actually win = 2 points, draw = 1 point)
         public int attackAttacker = 0; // DEBUG purposes
         public int attackRandomNearbyTarget = 0; // DEBUG purposes
-        public int regularHit = 0;
-        public int missTotalMainTargetAlive = 0;
-        public int missTotalMainTargetDead = 0;
-        public int missMainTarget = 0;
-        public int missSideTarget = 0;
-        public ConcurrentDictionary<UnitType, int> survivorsSumArmy = new ConcurrentDictionary<UnitType, int>(Environment.ProcessorCount, 101); // counts for each unit type the sum of survivors of all battles
+        public int regularHit = 0; // DEBUG purposes
+        public int missTotalMainTargetAlive = 0; // DEBUG purposes
+        public int missTotalMainTargetDead = 0; // DEBUG purposes
+        public int missMainTarget = 0; // DEBUG purposes
+        public int missSideTarget = 0; // DEBUG purposes
+        public ConcurrentDictionary<UnitType, int> survivorsSumArmy = new ConcurrentDictionary<UnitType, int>(Environment.ProcessorCount, 101); // the sum of survivors of all battles by unit type
         public int[] resourcesInvested = new int[3]; // worth (food, wood, gold) of all starting units
         public int[] resourcesRemaining = new int[3]; // worth (food, wood, gold) of all surviving units
         public int[] resourcesGenerated = new int[3]; // sum of all generated resources (currently only for Keshiks)
-        public List<int> amountStartUnits = new List<int>();
-        public int playerIndex;
+        public List<int> amountStartUnits = new List<int>(); // contains the number of start units of each unit type; a list of all unit types can be found in the static AoeData.cs class
+        public int playerIndex; // currently either 0 (first player) or 1 (second player)
 
 
         // Player GUI //

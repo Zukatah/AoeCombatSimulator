@@ -5,34 +5,33 @@ namespace AoeCombatSimulator
 {
     public class Unit
     {
-        public decimal hp;
-        public decimal hpRegPerMin;
+        public decimal hp; // hit points
+        public decimal hpRegPerMin; // hit points regeneration per minute (relevant for berserk and camel archer)
 
-        public Dictionary<ArmorClass, decimal> attackValues;
-        public Dictionary<ArmorClass, decimal> armorClasses;
+        public Dictionary<ArmorClass, decimal> attackValues; // contains all armor classes this unit attacks (including baseMelee and basePierce) and the respective damage values
+        public Dictionary<ArmorClass, decimal> armorClasses; // contains all armor classes this unit has (including baseMelee and basePierce) and the respective armor values
 
-        public decimal attackSpeed;
-        public double attackRange;
-        public double attackRangeMin;
-        public decimal attackDelay;
-        public double projectileSpeed;
-        public short cleaveType = 0; // 0=none, 1=flat5, 2=50%
-        public double cleaveRadius = 0.0;
-        public int accuracyPercent;
+        public decimal attackSpeed; // time between the beginning of two consecutive attacks
+        public double attackRange; // maximum attack range in tiles; the actual attack range is attackRange + radius
+        public double attackRangeMin; // minimum attack range in tiles (skirmishers, genitours, ...); the actual minimum attack range is attackRangeMin + radius
+        public decimal attackDelay; // the time in seconds between starting an attack and dealing the damage (or launching the projectile for ranged units); especially important for Hit&Run
+        public double projectileSpeed; // projectile speed in tiles/s
+        public short cleaveType = 0; // 0=none, 1=flat5 (slav infantry, cataphracts), 2=50% (elephants), 3=100% (flaming camels)
+        public double cleaveRadius = 0.0; // cleaves enemy units if they are closer than cleaveRadius+ownRadius to cleaving unit
+        public int accuracyPercent; // 100 does always hit; 50 does mean 50% will hit and 50% are randomly distributed (they can still hit the main target or other targets)
 
-        public bool attackIsMissile; // missiles damage targets on their way
-        public double missileFlightDistance;
-        public double secondaryMissileFlightDistance;
+        public bool attackIsMissile; // only true for ranged units that fire missiles which damage targets on their way (scorpions and ballista elephants)
+        public double missileFlightDistance; // flight distance of missiles, since they don't necessarily stop flying at the intended target
+        public double secondaryMissileFlightDistance; // flight distance of secondary missiles, since they don't necessarily stop flying at the intended target
 
-        public bool secondaryAttack;
+        public bool secondaryAttack; // some units fire secondary projectiles in addition to primary ones (chu ko nu, kipchaks, ballista elephants with unique tech, ...)
         public short secondaryAttackProjectileCount = 1; // per attack ChuKoNus, Kipchaks and Organ Guns create more than a single secondary projectile
         public Dictionary<ArmorClass, decimal> secondaryAttackValues;
 
-        public double moveSpeed;
+        public double moveSpeed; // move speed in tiles/s
+        public double radius; // size of the unit in tiles
 
-        public double radius;
 
-        
         public UnitType unitType; // this unit's unit type; the unit type defines many attributes of each unit
         public Battle battle; // the reference to the battle instance this unit belongs to
         public decimal curHp; // the current hit points of this unit
@@ -89,8 +88,8 @@ namespace AoeCombatSimulator
             X = x;
             Y = y;
 
-            Gx = x < -20.0 ? 0 : Math.Min(21, 1 + (int)Math.Floor((x + 20.0) / 2.0));
-            Gy = y < -20.0 ? 0 : Math.Min(21, 1 + (int)Math.Floor((y + 20.0) / 2.0));
+            Gx = x < -20.0 ? 0 : Math.Min(Battle.GRID_LENGTH - 1, 1 + (int)Math.Floor(x + 20.0));
+            Gy = y < -20.0 ? 0 : Math.Min(Battle.GRID_LENGTH - 1, 1 + (int)Math.Floor(y + 20.0));
 
             battle.gridUnits[Gx, Gy].Add(this);
         }
@@ -158,8 +157,8 @@ namespace AoeCombatSimulator
                 X = Nx;
                 Y = Ny;
 
-                int n_gx = X < -20.0 ? 0 : Math.Min(21, 1 + (int)Math.Floor((X + 20.0) / 2.0));
-                int n_gy = Y < -20.0 ? 0 : Math.Min(21, 1 + (int)Math.Floor((Y + 20.0) / 2.0));
+                int n_gx = X < -20.0 ? 0 : Math.Min(Battle.GRID_LENGTH - 1, 1 + (int)Math.Floor(X + 20.0));
+                int n_gy = Y < -20.0 ? 0 : Math.Min(Battle.GRID_LENGTH - 1, 1 + (int)Math.Floor(Y + 20.0));
 
                 if (n_gx != Gx || n_gy != Gy)
                 {
@@ -298,6 +297,7 @@ namespace AoeCombatSimulator
             attackAnimDur = 0; // Reset attack animation time
         }
 
+        /* Idea for finding new targets tested previously: Pick up to 5 random targets of the enemy army and choose the closest one as the next target. */
         public void EnsureHasTarget()
         {
             List<Unit> targetArmy = armyIndex == 0 ? battle.armies[1] : battle.armies[0];
@@ -339,44 +339,3 @@ namespace AoeCombatSimulator
         }
     }
 }
-
-
-
-
-
-/*
-int[] possibleTargetIndex = new int[targetArmy.Count > 3 ? 3 : targetArmy.Count];
-double[] possibleTargetDistSq = new double[targetArmy.Count > 8 ? 8 : targetArmy.Count];
-int closestUnitIndex = -1;
-double closestUnitDistSq = Double.MaxValue;
-for (int i = 0; i < possibleTargetIndex.Length; i++)
-{
-    possibleTargetIndex[i] = targetArmy.Count > 8 ? rnd.Next(targetArmy.Count) : i;
-    possibleTargetDistSq[i] = (x - targetArmy[possibleTargetIndex[i]].x) * (x - targetArmy[possibleTargetIndex[i]].x) + (y - targetArmy[possibleTargetIndex[i]].y) * (y - targetArmy[possibleTargetIndex[i]].y);
-    if (closestUnitDistSq > possibleTargetDistSq[i])
-    {
-        closestUnitDistSq = possibleTargetDistSq[i];
-        closestUnitIndex = possibleTargetIndex[i];
-    }
-}
-target = targetArmy[closestUnitIndex];
-*/
-
-/*
-int maxUnitsComingIntoQuestion = targetArmy.Count > 80 ? 80 : targetArmy.Count;
-int possibleTargetIndex;
-double possibleTargetDistSq;
-int closestUnitIndex = -1;
-double closestUnitDistSq = Double.MaxValue;
-for (int i = 0; i < maxUnitsComingIntoQuestion; i++)
-{
-    possibleTargetIndex = targetArmy.Count > 80 ? rnd.Next(targetArmy.Count) : i;
-    possibleTargetDistSq = (x - targetArmy[possibleTargetIndex].x) * (x - targetArmy[possibleTargetIndex].x) + (y - targetArmy[possibleTargetIndex].y) * (y - targetArmy[possibleTargetIndex].y);
-    if (closestUnitDistSq > possibleTargetDistSq)
-    {
-        closestUnitDistSq = possibleTargetDistSq;
-        closestUnitIndex = possibleTargetIndex;
-    }
-}
-target = targetArmy[closestUnitIndex];
-*/

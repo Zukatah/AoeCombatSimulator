@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AoeCombatSimulator
 {
@@ -10,7 +7,7 @@ namespace AoeCombatSimulator
     {
         static Random rnd = new Random(Environment.TickCount);
 
-        public static void Shuffle<T>(this IList<T> list)
+        public static void Shuffle<T>(this IList<T> list) // used to shuffle the start formations of the armies (of course melee and ranged units seperately)
         {
             int n = list.Count;
             while (n > 1)

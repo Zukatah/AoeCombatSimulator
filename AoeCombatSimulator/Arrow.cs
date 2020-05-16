@@ -6,9 +6,9 @@ namespace AoeCombatSimulator
 {
     public class Arrow : Projectile
     {
-        public int eta;
-        public double fractionOfMaxRange; // 1.0 if the arrow is fired over a distance equal to 100% of attacker's attack range, 0.0 if arrow is fired over a distance equal to 0% of attacker's attack range
-        private static Random rnd = new Random();
+        public int eta; // estimated time of arrival (contains the number of the frame in which this arrow will arive)
+        public double fractionOfMaxRange; // 1.0 if fired over a distance equal to 100% of attacker's attack range, 0.0 if fired over a distance equal to 0% of attacker's attack range
+        private static Random rnd = new Random(); // random generator in case accuray isn't 100%
 
         public Arrow(Battle battle, Unit attacker, Unit target, int eta, double fractionOfMaxRange, bool secondary) : base(battle, attacker, target, secondary)
         {

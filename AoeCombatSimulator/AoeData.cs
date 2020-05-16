@@ -517,7 +517,7 @@ namespace AoeCombatSimulator
             ut_eliteBallistaElephant.armorClasses.Add(ac_uniqueUnit, 0);
             ut_eliteBallistaElephant.attackValues.Add(ac_basePierce, 10);
             ut_eliteBallistaElephant.attackIsMissile = true;
-            ut_eliteBallistaElephant.missileFlightDistance = 6.0; // scorpion missiles are always flying over a distance of 10.5 tiles, even if their attack range is only 8 tiles
+            ut_eliteBallistaElephant.missileFlightDistance = 6.0;
             ut_eliteBallistaElephant.secondaryMissileFlightDistance = 12.5;
             ut_eliteBallistaElephant.secondaryAttack = true;
             ut_eliteBallistaElephant.secondaryAttackValues = new Dictionary<ArmorClass, decimal>();
