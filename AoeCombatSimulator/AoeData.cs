@@ -70,7 +70,7 @@ namespace AoeCombatSimulator
 
         public static UnitType ut_eliteKamayuk = new UnitType("Elite Kamayuk", 80, 2.0m, 1.0, 0.5m, Double.MaxValue, 1.1, 60, 0, 30);
         public static UnitType ut_slinger = new UnitType("Slinger", 40, 2.0m, 8.0, 0.8m, 5.5, 0.96, 30, 0, 40);
-        public static UnitType ut_eliteElephantArcher = new UnitType("Elite Elephant Archer", 350, 2.125m, 7.0, 0.4m, 7.0, 0.88, 100, 0, 80, 0.6);
+        public static UnitType ut_eliteElephantArcher = new UnitType("Elite Elephant Archer", 350, 1.7m, 7.0, 0.4m, 7.0, 0.88, 100, 0, 70, 0.6);
         public static UnitType ut_imperialCamelRider = new UnitType("Imperial Camel Rider", 160, 2.0m, 0.0, 0.5m, Double.MaxValue, 1.595, 55, 0, 60, 0.4);
         public static UnitType ut_eliteGenoeseCrossbowman = new UnitType("Elite Genoese Crossbowman", 50, 1.7m, 7.0, 0.5m, 7.0, 0.96, 0, 45, 45);
         public static UnitType ut_condottiero = new UnitType("Condottiero", 80, 1.9m, 0.0, 0.75m, Double.MaxValue, 1.32, 50, 0, 35);

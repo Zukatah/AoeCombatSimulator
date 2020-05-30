@@ -85,8 +85,8 @@ namespace AoeCombatSimulator
 
         public void SetXYInitial(double x, double y)
         {
-            X = x;
-            Y = y;
+            X = Nx = x;
+            Y = Ny = y;
 
             Gx = x < -20.0 ? 0 : Math.Min(Battle.GRID_LENGTH - 1, 1 + (int)Math.Floor(x + 20.0));
             Gy = y < -20.0 ? 0 : Math.Min(Battle.GRID_LENGTH - 1, 1 + (int)Math.Floor(y + 20.0));
@@ -223,7 +223,7 @@ namespace AoeCombatSimulator
                 {
                     List<Unit> targetArmy = armyIndex == 0 ? battle.armies[1] : battle.armies[0];
                     int affectedTargets = 0;
-                    int maxTargets = 6 + (int)Math.Round(5.0 * (radius - 0.4)); // infantry cleaves up to 6 units, cavalry up to 7, elephants up to 8 (limit to offset non-existing collision detection)
+                    int maxTargets = 6 + (int)Math.Round(5.0 * (radius - 0.2)); // infantry cleaves up to 6 units, cavalry up to 7, elephants up to 8 (limit to offset non-existing collision detection)
                     targetArmy.ForEach(possibleTarget => {
                         if (possibleTarget != target && affectedTargets < maxTargets && (X - possibleTarget.X) * (X - possibleTarget.X) + (Y - possibleTarget.Y) * (Y - possibleTarget.Y) < (cleaveRadius + target.radius)* (cleaveRadius + target.radius))
                         {

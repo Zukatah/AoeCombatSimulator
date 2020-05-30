@@ -88,18 +88,6 @@
     <None Include="Resources\swords-2453295_1280.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\gold-1013618_960_720.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\gold-1013618_960_7201.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\TM-2011-10manat-Monument3-b.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\gold-1013618_960_7202.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\gold-bars-4722600_960_720.png" />
   </ItemGroup>
   <ItemGroup>

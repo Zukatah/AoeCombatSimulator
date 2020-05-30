@@ -99,15 +99,15 @@ namespace AoeCombatSimulator
 
         private void CountSurvivors()
         {
-            int[] utSurvivorsArmy = new int[2];
+            int utSurvivorsArmy;
             int curValue;
             for (int i = 0; i < 2; i++)
             {
                 AoeData.unitTypesList.ForEach(ut => {
-                    utSurvivorsArmy[i] = armies[i].FindAll(u => u.unitType == ut).Count;
+                    utSurvivorsArmy = armies[i].FindAll(u => u.unitType == ut).Count;
                     while (userInterface.players[i].survivorsSumArmy.TryGetValue(ut, out curValue))
                     {
-                        if (userInterface.players[i].survivorsSumArmy.TryUpdate(ut, curValue + utSurvivorsArmy[i], curValue))
+                        if (userInterface.players[i].survivorsSumArmy.TryUpdate(ut, curValue + utSurvivorsArmy, curValue))
                         {
                             break;
                         }
