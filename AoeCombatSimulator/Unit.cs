@@ -52,6 +52,8 @@ namespace AoeCombatSimulator
         public int index; // DEBUG purposes; each unit has a unique index within its army
         public short armyIndex; // 0=Army1, 1=Army2
         public bool running = false; // for hit&run calculations
+        public int timeSinceFirstTryToAttackTarget = 0; // if the target is surrounded by attackers for a longer while, the unit will eventually target a different unit
+        public int maxNumberOfAttackers; // Max attackers for infantry 4, cav 6, elephants 8
 
 
         public Unit(UnitType unitType, Battle battle, short armyIndex)
@@ -81,6 +83,7 @@ namespace AoeCombatSimulator
             this.battle = battle;
             curHp = hp;
             this.armyIndex = armyIndex;
+            maxNumberOfAttackers = 4 + (int)Math.Round(10.0 * (radius - 0.2)); // Max attackers for infantry 4, cav 6, elephants 8
         }
 
         public void SetXYInitial(double x, double y)
@@ -98,6 +101,31 @@ namespace AoeCombatSimulator
         {
             this.index = index;
             rnd = new Random(index + armyIndex * 1000 + Environment.TickCount);
+        }
+
+        public void ApplyHpReg()
+        {
+            curHp += hpRegPerMin / 6000.0m;
+        }
+
+        public bool CantReachTarget()
+        {
+		    return target.attackedBy.IndexOf(this) >= target.maxNumberOfAttackers;
+        }
+
+        public void CheckIfToSwitchTarget() // this function is not perfectly symmetrical (because P1 units potentially get new targets first which might influence P2 target switches)
+        { 
+            timeSinceFirstTryToAttackTarget++;
+		    if(attackedBy.Count > 0){
+                timeSinceFirstTryToAttackTarget = 0;
+                target.attackedBy.Remove(this);
+                target = attackedBy[rnd.Next(attackedBy.Count)];
+                target.attackedBy.Add(this);
+            }
+		    else if (timeSinceFirstTryToAttackTarget > 200){
+                target.attackedBy.Remove(this);
+                target = null;
+            }
         }
 
         public bool TargetWithinAttackRange()
@@ -175,6 +203,7 @@ namespace AoeCombatSimulator
             inAttackMotion = true;
             attackAnimDur = 0;
             attackCd = attackSpeed;
+            timeSinceFirstTryToAttackTarget = 0;
         }
 
         public bool AttackAnimationFinished()
@@ -223,25 +252,35 @@ namespace AoeCombatSimulator
                 {
                     List<Unit> targetArmy = armyIndex == 0 ? battle.armies[1] : battle.armies[0];
                     int affectedTargets = 0;
-                    int maxTargets = 6 + (int)Math.Round(5.0 * (radius - 0.2)); // infantry cleaves up to 6 units, cavalry up to 7, elephants up to 8 (limit to offset non-existing collision detection)
+                    int maxTargets = 1; // 6 + (int)Math.Round(5.0 * (radius - 0.2)); // infantry cleaves up to 6 units, cavalry up to 7, elephants up to 8 (limit to offset non-existing collision detection)
+                    int maxBystanderTargets = Math.Max(0, maxTargets - attackedBy.Count);
+                    int bystandersHit = 0;
                     targetArmy.ForEach(possibleTarget => {
-                        if (possibleTarget != target && affectedTargets < maxTargets && (X - possibleTarget.X) * (X - possibleTarget.X) + (Y - possibleTarget.Y) * (Y - possibleTarget.Y) < (cleaveRadius + target.radius)* (cleaveRadius + target.radius))
+                        if ((X - possibleTarget.X) * (X - possibleTarget.X) + (Y - possibleTarget.Y) * (Y - possibleTarget.Y) < (cleaveRadius + target.radius) * (cleaveRadius + target.radius))
                         {
-                            if (cleaveType == 1)
+                            if (possibleTarget != this.target && (attackedBy.Contains(possibleTarget) || bystandersHit < maxBystanderTargets || cleaveType == 3))
                             {
-                                damageDealt = 5.0m;
-                            }
-                            else
-                            {
-                                damageDealt = CalculateDamageDealtToTarget(this, possibleTarget);
-                                if (cleaveType == 2) // cleaveType 2 (elephants) deal 50% area damage; cleaveType 3 (petards, flaming camels) deal 100% area damage
+                                if (!attackedBy.Contains(possibleTarget))
                                 {
-                                    damageDealt *= 0.5m;
+                                    bystandersHit++;
                                 }
-                                damageDealt = damageDealt < 1 ? 1 : damageDealt;
+
+                                if (cleaveType == 1)
+                                {
+                                    damageDealt = 5.0m;
+                                }
+                                else
+                                {
+                                    damageDealt = CalculateDamageDealtToTarget(this, possibleTarget);
+                                    if (cleaveType == 2) // cleaveType 2 (elephants) deal 50% area damage; cleaveType 3 (petards, flaming camels) deal 100% area damage
+                                    {
+                                        damageDealt *= 0.5m;
+                                    }
+                                    damageDealt = damageDealt < 1 ? 1 : damageDealt;
+                                }
+                                possibleTarget.curHp -= damageDealt;
+                                affectedTargets++;
                             }
-                            possibleTarget.curHp -= damageDealt;
-                            affectedTargets++;
                         }
                     });
                 }
