@@ -110,7 +110,7 @@ namespace AoeCombatSimulator
 
         public bool CantReachTarget()
         {
-		    return target.attackedBy.IndexOf(this) >= target.maxNumberOfAttackers;
+		    return target.attackedBy.IndexOf(this) >= target.maxNumberOfAttackers && attackRange <= 1.0;
         }
 
         public void CheckIfToSwitchTarget() // this function is not perfectly symmetrical (because P1 units potentially get new targets first which might influence P2 target switches)
@@ -125,6 +125,8 @@ namespace AoeCombatSimulator
 		    else if (timeSinceFirstTryToAttackTarget > 200){
                 target.attackedBy.Remove(this);
                 target = null;
+                timeSinceFirstTryToAttackTarget = 0;
+                EnsureHasTarget();
             }
         }
 
@@ -151,7 +153,7 @@ namespace AoeCombatSimulator
             dlength = (dlength == 0.0 ? 1.0 : dlength);
             dx /= dlength;
             dy /= dlength;
-            double speedAfterBumpReduction = target.attackedBy[0] == this ? moveSpeed * 0.01 : moveSpeed * 0.01 / Math.Pow(target.attackedBy.Count, 0.2); // 54
+            double speedAfterBumpReduction = target.attackedBy[0] == this ? moveSpeed * 0.01 : moveSpeed * 0.01 / Math.Pow(target.attackedBy.Count, 0.15); // 54
             Nx = X + (speedAfterBumpReduction > dlength ? dlength : speedAfterBumpReduction) * dx;
             Ny = Y + (speedAfterBumpReduction > dlength ? dlength : speedAfterBumpReduction) * dy;
         }
@@ -162,17 +164,19 @@ namespace AoeCombatSimulator
             double dy = Y - target.Y;
             double dlength = Math.Sqrt(dx * dx + dy * dy);
             dlength = dlength == 0.0 ? 1.0 : dlength;
+            double numberOfCloseUnits = Math.Max(battle.gridUnits[Gx, Gy].Count - 1, 1);
+            double slowFactor = 1.0 / numberOfCloseUnits;
             dx /= dlength;
             dy /= dlength;
-            if (dlength + moveSpeed * 0.01 > attackRange)
+            if (dlength + moveSpeed * 0.01 * slowFactor > attackRange)
             {
                 Nx = target.X + attackRange * dx;
                 Ny = target.Y + attackRange * dy;
             }
             else
             {
-                Nx = X + moveSpeed * 0.01 * dx;
-                Ny = Y + moveSpeed * 0.01 * dy;
+                Nx = X + moveSpeed * 0.01 * dx * slowFactor;
+                Ny = Y + moveSpeed * 0.01 * dy * slowFactor;
             }
             Nx = Nx > 120 ? 120.0 : (Nx < -120.0 ? -120.0 : Nx);
             Ny = Ny > 120 ? 120.0 : (Ny < -120.0 ? -120.0 : Ny);

@@ -142,6 +142,12 @@ namespace AoeCombatSimulator
                     dyingUnit.target.attackedBy.Remove(dyingUnit);
                     dyingUnit.alive = false;
                     gridUnits[dyingUnit.Gx, dyingUnit.Gy].Remove(dyingUnit);
+                    if (dyingUnit.unitType == AoeData.ut_eliteKonnik)
+                    {
+                        Unit dismountedKonnik = new Unit(AoeData.ut_eliteKonnikDismounted, this, (short)i);
+                        armies[i].Add(dismountedKonnik);
+                        dismountedKonnik.SetXYInitial(dyingUnit.X, dyingUnit.Y);
+                    }
                 });
                 graveyard.AddRange(armies[i].FindAll(unit => unit.curHp <= 0.0m));
                 armies[i].RemoveAll(unit => unit.curHp <= 0.0m);

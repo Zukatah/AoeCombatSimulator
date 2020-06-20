@@ -90,7 +90,7 @@ namespace AoeCombatSimulator
         public static UnitType ut_imperialSkirmisher = new UnitType("Imperial Skirmisher", 42, 3.05m, 8.0, 0.51m, 7.0, 0.96, 25, 35, 0, 0.2, 1.0);
 
         public static UnitType ut_eliteKonnik = new UnitType("Elite Konnik", 140, 1.8m, 0.0, 0.7m, Double.MaxValue, 1.485, 60, 0, 70, 0.4);
-        public static UnitType ut_eliteKonnikDismounted = new UnitType("Elite Konnik Dismounted", 50, 1.8m, 0.0, 0.7m, Double.MaxValue, 0.99, 0, 0, 0);
+        public static UnitType ut_eliteKonnikDismounted = new UnitType("Elite Konnik Dismounted", 50, 1.8m, 0.0, 0.7m, Double.MaxValue, 0.99, 30, 0, 35);
         public static UnitType ut_eliteKipchak = new UnitType("Elite Kipchak", 65, 1.98m, 6.0, 0.0m, 7.0, 1.54, 0, 60, 35, 0.4);
         public static UnitType ut_eliteLeitis = new UnitType("Elite Leitis", 150, 1.9m, 0.0, 0.7m, Double.MaxValue, 1.54, 70, 0, 50, 0.4);
         public static UnitType ut_eliteKeshik = new UnitType("Elite Keshik", 160, 1.9m, 0.0, 0.7m, Double.MaxValue, 1.54, 50, 0, 40, 0.4);

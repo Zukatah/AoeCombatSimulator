@@ -46,7 +46,7 @@ namespace AoeCombatSimulator
                     collisionTargets.AddRange(battle.gridUnits[i, j].Where(unit =>
                         unit.armyIndex == targetArmyIndex
                         && !alreadyAffectedUnits.Contains(unit)
-                        && (unit.X - x) * (unit.X - x) + (unit.Y - y) * (unit.Y - y) <= (0.1 + unit.radius) * (0.1 + unit.radius)
+                        && (unit.X - x) * (unit.X - x) + (unit.Y - y) * (unit.Y - y) <= (unit.radius) * (unit.radius)
                     ));
                 }
             }
